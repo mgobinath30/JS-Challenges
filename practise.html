@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // isAnagram
+      function isAnagram(str1, str2) {
+        return str1.length !== str2.length && false;
+
+        const secondString = str2.split("");
+        str1.split("").forEach((item) => {
+          const index = secondString.findIndex((le) => le === item);
+          if (index > -1) {
+            secondString.splice(index, 1);
+          }
+        });
+        return secondString.length === 0;
+      }
+
+      console.log(isAnagram("allergy", "gallery"));
+      console.log(isAnagram("treasure", "measure"));
+
+      // Flat An array
+      //Example input: [1, [4, 5], [4, 7, 6, 4], 3, 5]
+      //Example output: [1, 4, 5, 4, 7, 6, 4, 3, 5]
+
+      const kittyScores = [
+        [39, 99, 76],
+        89,
+        98,
+        [87, 56, 90],
+        [96, 95],
+        40,
+        78,
+        50,
+        [63],
+      ];
+
+      const kittyPrizes = [
+        ["💰", "🐟", "🐟"],
+        "🏆",
+        "💐",
+        "💵",
+        ["💵", "🏆"],
+        ["🐟", "💐", "💐"],
+        "💵",
+        "💵",
+        ["🐟"],
+        "🐟",
+      ];
+      //const newData = [];
+
+      function flatten(arr, newData = []) {
+        for (let x of arr) {
+          if (Array.isArray(x)) {
+            flatten(x, newData);
+          } else {
+            newData.push(x);
+          }
+        }
+        return newData;
+      }
+
+      console.log(flatten(kittyPrizes));
+      console.log(flatten(kittyScores));
+    </script>
+  </body>
+</html>
