@@ -76,6 +76,80 @@
       }
 
       console.log(sumArray(studentCount));
+
+      // Find max count value inside object
+      const gameNightFood = {
+        "🍕 pizza": 3,
+        "🌮 tacos": 10,
+        "🥗 salads": 7,
+        "🍝 pasta": 5,
+      };
+
+      function findTheWinnerApproach1(obj) {
+        //if (!Object.keys(obj)) return "Empty argument";
+        // Object.keys will return [] in js empty object also true so above condition will never run try approach
+
+        const keys = Object.keys(obj);
+        if (!keys.length) return "Empty";
+        let maxItem = { count: 0, item: "" };
+        for (let [item, count] of Object.entries(obj)) {
+          if (count > maxItem.count) {
+            maxItem.item = item;
+            maxItem.count = count;
+          }
+        }
+
+        return `The winner is ${maxItem.item} with ${maxItem.count} votes!`;
+      }
+
+      // Wrong since mutuate outer value
+      function findTheWinnerApproach2(obj) {
+        const keys = Object.keys(obj);
+        if (!keys.length) return "Empty";
+        const maxItem = { count: 0, item: "" };
+
+        Object.entries(obj).reduce((acc, [item, count]) => {
+          if (count > acc.count) {
+            acc.item = item;
+            acc.count = count;
+          }
+          return acc;
+        }, maxItem);
+
+        return `The winner is ${maxItem.item} with ${maxItem.count} votes!`;
+      }
+
+      // Correct apprach Above
+      function findTheWinnerApproach21(obj) {
+        const keys = Object.keys(obj);
+        if (!keys.length) return "Empty";
+        const maxItem = Object.entries(obj).reduce(
+          (acc, [item, count]) => {
+            if (count > acc.count) {
+              return { item, count };
+            }
+            return acc;
+          },
+          { count: 0, item: "" },
+        );
+
+        return `The winner is ${maxItem.item} with ${maxItem.count} votes!`;
+      }
+
+      function findTheWinnerApproach3(obj) {
+        const keys = Object.keys(obj);
+        if (!keys.length) return "Empty";
+
+        const maxItem = keys.reduce((acc, cur) =>
+          obj[cur] > obj[acc] ? cur : acc,
+        );
+
+        return `The winner is ${maxItem} with ${obj[maxItem]} votes!`;
+
+        //return obj[maxItem];
+      }
+
+      console.log(findTheWinnerApproach21(gameNightFood));
     </script>
   </body>
 </html>
