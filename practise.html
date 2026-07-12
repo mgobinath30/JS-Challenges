@@ -221,6 +221,70 @@
         }));
 
       console.log(freeprodcuts);
+
+      // Same As above find sweet products
+      function getSaleItems(data) {
+        return data
+          .filter((item) => item.type === "sweet")
+          .map(({ item, price }) => ({
+            item,
+            price,
+          }));
+      }
+
+      const shoppingCart = getSaleItems(data);
+
+      console.log(shoppingCart);
+
+      // Reduce
+      // No Initial Value: Accumulator starts as the first item; the loop starts at the second item.
+      // With Initial Value: Accumulator starts as your default value; the loop starts at the first item.
+      function total(arr) {
+        return parseFloat(
+          arr.reduce((acc, cur) => (acc += cur.price), arr[0].price).toFixed(2),
+        );
+      }
+
+      console.log(total(data));
+
+      // Without Filter use Reduce only to filter and add particular item price
+      function totalSavory(arr) {
+        return arr.reduce(
+          (acc, cur) => (cur.type === "savory" ? (acc += cur.price) : acc),
+          0,
+        );
+      }
+
+      // Sort Products
+      function sortProducts(data) {
+        return [...data].sort((a, b) => a.price - b.price);
+      }
+
+      // get unique tags
+      function getUniqueTags(data) {
+        const tags = new Set();
+        data.forEach((item) => item.tags.forEach((tag) => tags.add(tag)));
+        return [...tags];
+      }
+
+      function getUniqueTagsApproah1(data) {
+        const tags = data.flatMap((item) => item.tags);
+        return [...new Set(tags)];
+      }
+
+      console.log(getUniqueTagsApproah1(data));
+
+      //Without Set for unique items
+      function getUniqueTagsApproah3(data) {
+        const tags = data.flatMap((item) => item.tags);
+        const newTagObj = {};
+        return tags.filter((item) => {
+          if (!newTagObj[item]) {
+            newTagObj[item] = true;
+            return true;
+          }
+        });
+      }
     </script>
   </body>
 </html>
