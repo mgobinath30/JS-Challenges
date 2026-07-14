@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <nav
+      class="fixed-nav-bar"
+      style="height: 60px; position: fixed; top: 0"
+    ></nav>
+
+    <main style="height: 3000px">
+      <!-- Lots of content -->
+      <section id="footer-section">End of page</section>
+    </main>
+
+    <button class="back-to-top-btn">Scroll to Top</button>
+
+    <script>
+      // Scroll Position - pageXoffset / scrollX -> horizontal
+      // pageYoffset / scrollY -> Vertical
+
+      // viewport width -> document.documentElement.clientWidth
+      // viewport height -> document.documentElement.clientheight
+
+      // e.target.getBoundingClientRect() -> position from view port
+      const btn = document.querySelector(".back-to-top-btn");
+
+      btn.addEventListener("click", function (e) {
+        console.log(scrollY);
+        /* window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: "smooth",
+        }); */
+
+        document.body.scrollIntoView({
+          behavior: "smooth",
+        });
+      });
+    </script>
+  </body>
+</html>
