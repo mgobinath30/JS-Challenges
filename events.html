@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button class="purchase-btn">Add</button>
+
+    <script>
+      const purchaseBtn = document.querySelector(".purchase-btn");
+      function alertSuccess() {
+        console.log("Purchase processing...");
+      }
+      purchaseBtn.addEventListener("mouseenter", alertSuccess);
+
+      purchaseBtn.addEventListener("click", () => {
+        purchaseBtn.removeEventListener("mouseenter", alertSuccess);
+      });
+
+      //purchaseBtn.addEventListener("click", );
+    </script>
+  </body>
+</html>

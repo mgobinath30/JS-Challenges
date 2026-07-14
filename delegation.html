@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <ul class="nav__links-container">
+      <li class="lii">
+        <a href="">One 1 <span>11111</span></a>
+      </li>
+      <li class="lii">
+        <a href="">One 2 <span>21111</span></a>
+      </li>
+      <li class="lii">
+        <a href="">One 3 <span>31111</span></a>
+      </li>
+      <li class="lii">
+        <a href="">One 4 <span>41111</span></a>
+      </li>
+      <li class="lii">
+        <a href="">One 5 <span>51111</span></a>
+      </li>
+    </ul>
+
+    <div class="tabs-container">
+      <button class="tab-item" data-tab="1">
+        <span class="tab-label">Tab One</span>
+      </button>
+      <button class="tab-item" data-tab="2">
+        <span class="tab-label">Tab Two</span>
+      </button>
+    </div>
+
+    <script>
+      document
+        .querySelector(".nav__links-container")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          console.log(e.target.closest("a"));
+        });
+
+      const tabsContainer = document.querySelector(".tabs-container");
+
+      tabsContainer.addEventListener("click", function (e) {
+        const tar = e.target.closest(".tab-item");
+        if (!tar) return false;
+        console.log(tar.dataset.tab);
+      });
+    </script>
+  </body>
+</html>

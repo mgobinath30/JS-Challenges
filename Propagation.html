@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="outer-box" style="padding: 50px; background: red">
+      <button class="inner-btn">Click Me</button>
+    </div>
+    <script>
+      const outerBox = document.querySelector(".outer-box");
+      const innerBtn = document.querySelector(".inner-btn");
+
+      outerBox.addEventListener("click", () => console.log("outer clicked"));
+
+      innerBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        console.log("inner clicked");
+      });
+    </script>
+  </body>
+</html>
