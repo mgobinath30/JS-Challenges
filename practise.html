@@ -6,6 +6,54 @@
     <title>Document</title>
   </head>
   <body>
+    <!-- <ul class="user-list">
+      <li class="user-item">Arun</li>
+      <li class="user-item">Karan</li>
+      <li class="user-item">Vijay</li>
+    </ul>
+    <script>
+      const lists = document.getElementsByClassName("user-item");
+
+      [...lists].forEach((item) => {
+        item.textContent === "Karan" &&
+          item.insertAdjacentText("beforeend", " verified ");
+      });
+    </script> -->
+    <!-- <div class="profile-card" data-user-tier="premium">
+      <img
+        class="profile-avatar"
+        src="placeholder.png"
+        alt="User profile image"
+      />
+      <button class="toggle-btn">Change Theme</button>
+    </div>
+    <script>
+      const card = document.querySelector(".profile-card");
+      const btn = document.querySelector(".toggle-btn");
+      const img = document.querySelector(".profile-avatar");
+      btn.addEventListener("click", function () {
+        card.classList.toggle("high-contrast");
+        if (card.dataset.userTier === "premium")
+          card.style.backgroundColor = "gold";
+        else card.style.backgroundColor = "silver";
+        console.log(getComputedStyle(img).width);
+      });
+    </script> -->
+
+    <div class="product-card active-card" data-product-price="120">
+      <img class="product-thumb" src="thumb.jpg" style="height: 150px" />
+      <button class="buy-btn">Purchase</button>
+    </div>
+
+    <script>
+      const productCard = document.querySelector(".product-card");
+      const currentHeight = parseFloat(getComputedStyle(productCard).height);
+
+      productCard.style.height = `${currentHeight + 50}px`;
+      const price = Number(productCard.dataset.productPrice);
+      price > 100 && productCard.classList.remove("active-card");
+    </script>
+
     <script>
       // isAnagram
       function isAnagram(str1, str2) {
