@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button class="discount-btn">Apply Discount</button>
+
+    <div class="card-container">
+      <div class="card-header">
+        <span class="badge">Sale</span>
+        <button class="menu-trigger">X</button>
+      </div>
+      <div class="card-body">
+        <p>Product description here...</p>
+      </div>
+    </div>
+    <script>
+      const discount = document.querySelector(".discount-btn");
+
+      function calculateTotal(e, percentage) {
+        console.log(`Applying ${percentage}% discount.`);
+      }
+
+      discount.addEventListener("click", (event) => calculateTotal(event, 20));
+      const menuTrigger = document.querySelector(".menu-trigger");
+
+      menuTrigger.addEventListener("click", function (e) {
+        const cardContainer = e.target.closest(".card-container");
+
+        //const cardBody = cardContainer.lastElementChild;
+
+        const cardBody = cardContainer.querySelector(".card-body");
+
+        cardBody.style.backgroundColor = "grey";
+
+        e.target.querySelector(".badge").remove();
+      });
+    </script>
+  </body>
+</html>

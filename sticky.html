@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .sticky-active {
+        position: sticky;
+        top: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero-header" style="height: 400px; background: blue">
+      <h1>Welcome to our site</h1>
+    </header>
+    <nav class="main-nav" style="height: 2000px">Navigation Links</nav>
+
+    <script>
+      const nav = document.querySelector(".hero-header");
+      window.addEventListener("scroll", function (e) {
+        const horizontol = window.scrollY;
+        console.log(horizontol);
+        horizontol > 350
+          ? nav.classList.add("sticky-active")
+          : nav.classList.remove("sticky-active");
+      });
+    </script>
+  </body>
+</html>

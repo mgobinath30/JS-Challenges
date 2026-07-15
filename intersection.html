@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div
+      class="box-target"
+      style="margin-top: 1000px; height: 200px; background: red"
+    >
+      Target Box
+    </div>
+
+    <script>
+      // Options
+      const guardOptions = {
+        root: null,
+        threshold: 0.5,
+      };
+
+      // Report Action
+      function guardCallback(entries, observer) {
+        const [entry] = entries;
+        if (!entry.isIntersecting) return false;
+        entry.target.classList.add("visible-now");
+        observer.unobserve(entry.target);
+      }
+
+      // Target Element
+      const box = document.querySelector(".box-target");
+
+      // Guard
+      const guard = new IntersectionObserver(guardCallback, guardOptions);
+
+      // Inform Guard to watch Target
+      guard.observe(box);
+    </script>
+  </body>
+</html>
