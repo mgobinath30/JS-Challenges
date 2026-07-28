@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <section class="reveal-section">
+      <h2>Our Portfolio</h2>
+      <!-- A low-res blurry placeholder image loaded instantly -->
+      <img
+        class="lazy-img"
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpuCP9FAP6JyMEjp2cFS11vZ9gv7Egp8cJS88U94znjQ&s=10"
+        data-src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrSGi5HeC44zUz-3sI_p5FW3cDOnFsl2qKmGw_ESCqrQ&s=10"
+        alt="Portfolio"
+      />
+    </section>
+    <script>
+      // options
+      const secoptions = {
+        root: null,
+        threshold: 0.2,
+      };
+
+      function sectioreport(entries, observer) {
+        const [entry] = entries;
+        if (!entry.isIntersecting) return false;
+        entry.target.classList.remove("section--hidden");
+        observer.unobserve(entry.target);
+      }
+
+      const imgoptions = {
+        root: null,
+        threshold: 0,
+        rootMargin: "200px",
+      };
+
+      function imgeport(entries, observer) {
+        const [entry] = entries;
+        if (!entry.isIntersecting) return false;
+        const src = entry.target.dataset.src;
+        entry.target.setAttribute("src", src);
+        entry.target.addEventListener("load", function (e) {
+          e.target.classList.remove("lazy-blur");
+        });
+        //entry.target.unobserve(observer);
+        observer.unobserve(entry.target);
+      }
+
+      const reveal = document.querySelector(".reveal-section");
+      const lazy = document.querySelector(".lazy-img");
+
+      const revealObsrver = new IntersectionObserver(sectioreport, secoptions);
+      const imgObsrver = new IntersectionObserver(imgeport, imgoptions);
+
+      revealObsrver.observe(reveal);
+
+      imgObsrver.observe(lazy);
+    </script>
+  </body>
+</html>
