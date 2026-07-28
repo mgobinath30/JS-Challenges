@@ -1,5 +1,5 @@
 const API_URL = "https://forkify-api.jonas.io/api/v2/recipes/";
-
+const PER_PAGE = 5;
 // Helper
 
 function timeout(sec) {
@@ -25,7 +25,10 @@ const getJSON = async function (url) {
 // Model -------------
 const state = {
   recipe: {},
-  searchItems: [],
+  search: {
+    searchItems: [],
+    pageNumber: 1,
+  },
 };
 
 const getRecipe = async function (id) {
@@ -44,11 +47,18 @@ const getRecipe = async function (id) {
 const searchRecipe = async function (query) {
   try {
     const response = await getJSON(`${API_URL}?search=${query}`);
-    state.searchItems = response?.data?.recipes;
+    state.search.searchItems = response?.data?.recipes;
   } catch (err) {
     throw err;
   }
 };
+
+function changePageItem(page = state.search.pageNumber) {
+  state.search.pageNumber = page;
+  const start = (page - 1) * PER_PAGE;
+  const end = page * PER_PAGE;
+  return state.search.searchItems.slice(start, end);
+}
 
 searchRecipe("pizza");
 
@@ -58,17 +68,22 @@ searchRecipe("pizza");
 // view -------------
 class ParentView {
   _data;
+  _errormsg = "No Result Found";
   render(data) {
+    if (!data || (Array.isArray(data) && data.length === 0))
+      return this.generateErrorMessage();
     this._data = data;
     const markup = this._generateView();
     this._clear();
     this._parentElement.insertAdjacentHTML("afterbegin", markup);
   }
+
   generateLoading() {
     const markup = "<h1>Loading...</h1>";
     this._clear();
     this._parentElement.insertAdjacentHTML("afterbegin", markup);
   }
+
   generateErrorMessage(message = this._errormsg) {
     const markup = `<div class="error-msg">
     <h1 style="color:red">${message}</h1>
@@ -77,22 +92,19 @@ class ParentView {
     this._parentElement.insertAdjacentHTML("afterbegin", markup);
   }
 
+  _generateItem(item) {
+    return `<li>${item.quantity ?? ""} ${item.unit ?? ""} ${item.description}</li>`;
+  }
+
   _clear() {
     this._parentElement.innerHTML = "";
   }
 }
 
-class RecipeView {
+class RecipeView extends ParentView {
   _parentElement = document.querySelector(".recipeContainer");
   _data;
   _errormsg = "No Recipe Found.Please try again!";
-
-  render(data) {
-    this._data = data;
-    const markup = this._generateView();
-    this._clear();
-    this._parentElement.insertAdjacentHTML("afterbegin", markup);
-  }
 
   generateRender(handler) {
     ["hashchange", "load"].forEach((ev) =>
@@ -129,28 +141,6 @@ class RecipeView {
             </div>
           </div>`;
   }
-
-  _generateItem(item) {
-    return `<li>${item.quantity ?? ""} ${item.unit ?? ""} ${item.description}</li>`;
-  }
-
-  generateLoading() {
-    const markup = "<h1>Loading...</h1>";
-    this._clear();
-    this._parentElement.insertAdjacentHTML("afterbegin", markup);
-  }
-
-  generateErrorMessage(message = this._errormsg) {
-    const markup = `<div class="error-msg">
-    <h1 style="color:red">${message}</h1>
-    </div>`;
-    this._clear();
-    this._parentElement.insertAdjacentHTML("afterbegin", markup);
-  }
-
-  _clear() {
-    this._parentElement.innerHTML = "";
-  }
 }
 
 class SearchView {
@@ -174,9 +164,63 @@ class SearchView {
   }
 }
 
+class ResultView extends ParentView {
+  _parentElement = document.querySelector(".result-list");
+
+  _generateView() {
+    return `${this._data.map(this._generateItem).join("")}`;
+  }
+
+  _generateItem(item) {
+    return `<li><a href=${"#" + item.id}> ${item.title}</li>`;
+  }
+}
+
+class PaginationView extends ParentView {
+  _parentElement = document.querySelector(".pagination");
+
+  navigatepage(hanlder) {
+    this._parentElement.addEventListener("click", function (e) {
+      const el = e.target.closest("button");
+      if (!el) return;
+      console.log(el);
+      const page = +el.dataset.goto;
+      console.log(page);
+      hanlder(page);
+    });
+
+    // querySelector(".pagination-btn");
+  }
+
+  _generateView() {
+    const numberOfPage = Math.ceil(this._data.searchItems.length / PER_PAGE);
+    const currentPage = this._data.pageNumber;
+    console.log(numberOfPage);
+    console.log(currentPage);
+    if (currentPage === 1 && numberOfPage > 1) {
+      return `<div class="pagination-btn">
+      <button class="next" data-goto="${currentPage + 1}">Page ${currentPage + 1} </button></div>`;
+    }
+    if (currentPage > 1 && numberOfPage > currentPage) {
+      return `<div class="pagination-btn">
+      <button class="prev"  data-goto="${currentPage - 1}">Page ${currentPage - 1} </button>
+      <p>${"Page " + currentPage}</p>
+      <button class="next"  data-goto="${currentPage + 1}">Page ${currentPage + 1} </button></div>`;
+    }
+    if (currentPage === numberOfPage) {
+      return `<div class="pagination-btn">
+      <button class="prev"  data-goto="${currentPage - 1}">Page ${currentPage - 1} </button>
+      </div>`;
+    }
+    return "";
+  }
+}
+
 // controller -------------
 const recipeview = new RecipeView();
 const searchView = new SearchView();
+const resultView = new ResultView();
+const pagination = new PaginationView();
 
 async function loadData() {
   try {
@@ -193,19 +237,26 @@ async function loadData() {
 
 async function ControllerloadSearchData() {
   try {
+    resultView.generateLoading();
     const query = searchView.getSearchValue();
-    debugger;
     if (!query) return;
     await searchRecipe(query);
-    console.log(state.searchItems);
+    resultView.render(changePageItem());
+    pagination.render(state.search);
   } catch (err) {
     console.log(err);
   }
 }
 
+function controlPagination(page) {
+  resultView.render(changePageItem(page));
+  pagination.render(state.search);
+}
+
 const init = function () {
   recipeview.generateRender(loadData);
   searchView.loadDataSearch(ControllerloadSearchData);
+  pagination.navigatepage(controlPagination);
 };
 
 init();
