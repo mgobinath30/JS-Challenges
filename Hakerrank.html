@@ -1,0 +1,182 @@
+{# <!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /**
+       * Fetches page data from the HackerRank API and parses JSON automatically.
+       * Replacing Node's 'https' with the native Browser fetch API.
+       */
+      async function fetchPage(url) {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`HTTP network error: ${response.status}`);
+          }
+          return await response.json();
+        } catch (error) {
+          console.error(`Failed to fetch page asset: ${url}`, error);
+          throw error;
+        }
+      }
+
+      /**
+       * Retrieves and filters teams based on matches played using parallel network execution.
+       */
+      async function getTeams(year, k) {
+        const baseUrl = `https://jsonmock.hackerrank.com/api/football_matches?competition=UEFA%20Champions%20League&year=${year}`;
+
+        // 1. Fetch page 1 to discover 'total_pages' configuration from the API metadata
+        const firstPage = await fetchPage(`${baseUrl}&page=1`);
+        const totalPages = firstPage.total_pages;
+
+        const teamCounts = {};
+
+        // Helper function to process match structures on a page
+        const processPageData = (data) => {
+          if (!data) return;
+          for (const match of data) {
+            teamCounts[match.team1] = (teamCounts[match.team1] || 0) + 1;
+            teamCounts[match.team2] = (teamCounts[match.team2] || 0) + 1;
+          }
+        };
+
+        // Process data extracted from the initial response
+        processPageData(firstPage.data);
+
+        // 2. Queue remaining page promises for parallel execution (Concurrency Optimization)
+        const pagePromises = [];
+        for (let page = 2; page <= totalPages; page++) {
+          pagePromises.push(fetchPage(`${baseUrl}&page=${page}`));
+        }
+
+        // Execute all concurrent requests smoothly in parallel
+        const pages = await Promise.all(pagePromises);
+
+        // Aggregate results across all pages sequentially into our hash map
+        for (const pageData of pages) {
+          processPageData(pageData.data);
+        }
+
+        // 3. Filter teams matching threshold 'k' and apply alphabetical sorting transformations
+        return Object.keys(teamCounts)
+          .filter((team) => teamCounts[team] >= k)
+          .sort();
+      }
+
+      getTeams(2021, 5);
+    </script>
+  </body>
+</html>
+#}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Senior FE Dev - HackerRank Sandbox</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+        background: #f8f9fa;
+      }
+      #output {
+        background: #fff;
+        padding: 15px;
+        border-radius: 6px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>HackerRank Teams Output</h1>
+    <div id="output">Loading data from API...</div>
+
+    <script>
+      /**
+       * Senior Fix: Bypassing browser CORS block using a proxy for local development.
+       */
+      async function fetchPage(url) {
+        // Temporary proxy to bypass HackerRank's browser security block
+        const corsProxy = "https://herokuapp.com";
+        const proxiedUrl = corsProxy + url;
+
+        try {
+          const response = await fetch(proxiedUrl);
+          if (!response.ok) {
+            throw new Error(`HTTP network error: ${response.status}`);
+          }
+          return await response.json();
+        } catch (error) {
+          console.error(`Failed to fetch page asset: ${url}`, error);
+          throw error;
+        }
+      }
+
+      async function getTeams(year, k) {
+        const baseUrl = `https://hackerrank.com{year}`;
+
+        const firstPage = await fetchPage(`${baseUrl}&page=1`);
+        const totalPages = firstPage.total_pages;
+
+        const teamCounts = {};
+
+        const processPageData = (data) => {
+          if (!data) return;
+          for (const match of data) {
+            teamCounts[match.team1] = (teamCounts[match.team1] || 0) + 1;
+            teamCounts[match.team2] = (teamCounts[match.team2] || 0) + 1;
+          }
+        };
+
+        processPageData(firstPage.data);
+
+        const pagePromises = [];
+        for (let page = 2; page <= totalPages; page++) {
+          pagePromises.push(fetchPage(`${baseUrl}&page=${page}`));
+        }
+
+        const pages = await Promise.all(pagePromises);
+
+        for (const pageData of pages) {
+          processPageData(pageData.data);
+        }
+
+        return Object.keys(teamCounts)
+          .filter((team) => teamCounts[team] >= k)
+          .sort();
+      }
+
+      // --- CRITICAL SENIOR ADDITION: DRIVING THE FLOW FROM THE HTML SIDE ---
+      const displayContainer = document.querySelector("#output");
+
+      // We call the async function and handle the returned array promise safely
+      getTeams(2021, 5)
+        .then((teamsArray) => {
+          console.log("Teams list resolved:", teamsArray);
+
+          if (teamsArray.length === 0) {
+            displayContainer.textContent =
+              "No teams met the qualification criteria.";
+            return;
+          }
+
+          // Render the array into the DOM cleanly
+          displayContainer.innerHTML = `
+          <h3>Qualified Teams (Played >= 5 matches):</h3>
+          <ul>
+            ${teamsArray.map((team) => `<li>${team}</li>`).join("")}
+          </ul>
+        `;
+        })
+        .catch((err) => {
+          displayContainer.innerHTML = `<span style="color:red">Failed to load data: ${err.message}</span>`;
+        });
+    </script>
+  </body>
+</html>
