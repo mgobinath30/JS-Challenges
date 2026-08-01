@@ -3,6 +3,14 @@
 const API_KEY = "6cef678131a56b01553b6e7aa34f11b3";
 const BASE_URL = "https://api.openweathermap.org/data/2.5/weather?units=metric";
 
+function wait(sec) {
+  return new Promise(function (_, reject) {
+    setTimeout(
+      () => reject(new Error(`Request Took Look Tong for ${sec}`)),
+      sec * 1000,
+    );
+  });
+}
 // Helper
 async function fetchData(url) {
   try {
@@ -18,6 +26,19 @@ async function fetchData(url) {
 }
 
 // Model
+
+async function fetchWeather(url) {
+  try {
+    const response = await Promise.race[(await fetchData(url), wait(0))]();
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    throw err;
+  }
+}
 
 // View
 class WeatherView {
@@ -47,11 +68,11 @@ class WeatherView {
 const weatherView = new WeatherView();
 async function updateWeatherController(city) {
   try {
-    const data = await fetchData(`${BASE_URL}?q=${city}&appid=${API_KEY}'`);
+    const data = await fetchWeather(`${BASE_URL}?q=${city}&appid=${API_KEY}'`);
     console.log(data);
     weatherView.render(data);
   } catch (err) {
-    console.log(err);
+    alert(err);
   }
 }
 
