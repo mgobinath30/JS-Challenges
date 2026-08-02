@@ -1,0 +1,58 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  font-family: inherit;
+  background: linear-gradient(269deg, #683232, #78d025);
+}
+
+.card {
+  width: 90%;
+  max-width: 470px;
+  margin: 100px auto 0;
+  border-radius: 20px;
+  padding: 20px;
+  background: #fff;
+  color: #333;
+}
+
+.additem {
+  display: flex;
+}
+
+input#task {
+  flex: 1;
+  border-radius: 20px;
+  outline: 0px;
+  border: 0px;
+  background: #007fff70;
+  padding: 10px;
+}
+
+form {
+  display: flex;
+  flex: 1;
+  gap: 10px;
+}
+
+button {
+  background: #00ff0d;
+  border: 0;
+  outline: 0;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+ol.task-list-items li {
+  display: flex;
+  justify-content: space-between;
+  margin-block: 10px;
+  align-items: center;
+}
